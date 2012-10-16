@@ -8,22 +8,25 @@ use Zend\Stdlib\Hydrator\ClassMethods;
 use Application\Service\Filemanager;
 use Comment\Repository\Comment as CommentRepository;
 use Comment\Form\CommentForm;
-use Comment\Entity\Comment;
-class Comment implements ServiceManagerAwareInterface
-{
+use Comment\Entity\Comment as CommentEntity;
+
+class Comment implements ServiceManagerAwareInterface {
+
     /**
      * @var CommentForm 
      */
     protected $commentForm;
-    
+
     /**
      * @var Filemanager
      */
     protected $filemanagerService;
+
     /**
      * @var CommentRepository
      */
     protected $repository;
+
     /**
      * @var ServiceManager
      */
@@ -34,8 +37,7 @@ class Comment implements ServiceManagerAwareInterface
      * @param Filemanager $filemanagerService
      * @return User 
      */
-    public function setFilemanagerService(Filemanager $filemanagerService)
-    {
+    public function setFilemanagerService(Filemanager $filemanagerService) {
         $this->filemanagerService = $filemanagerService;
         return $this;
     }
@@ -45,8 +47,7 @@ class Comment implements ServiceManagerAwareInterface
      * @param CommentRepository $repository
      * @return Comment 
      */
-    public function setRepository(CommentRepository $repository)
-    {
+    public function setRepository(CommentRepository $repository) {
         $this->repository = $repository;
         return $this;
     }
@@ -56,8 +57,7 @@ class Comment implements ServiceManagerAwareInterface
      * @param User $user
      * @return array 
      */
-    public function getUserComments(User $user)
-    {
+    public function getUserComments(User $user) {
         return $this->repository->getUserComments($user);
     }
 
@@ -66,8 +66,7 @@ class Comment implements ServiceManagerAwareInterface
      * @param Project $project
      * @return array 
      */
-    public function getProjectComments(Project $project)
-    {
+    public function getProjectComments(Project $project) {
         return $this->repository->getProjectComments($project);
     }
 
@@ -76,8 +75,7 @@ class Comment implements ServiceManagerAwareInterface
      * @param type $id
      * @return Comment 
      */
-    public function getComment($id)
-    {
+    public function getComment($id) {
         return $this->repository->find($id);
     }
 
@@ -85,8 +83,7 @@ class Comment implements ServiceManagerAwareInterface
      *
      * @return array 
      */
-    public function getCommentAll()
-    {
+    public function getCommentAll() {
         return $this->repository->findAll();
     }
 
@@ -97,19 +94,14 @@ class Comment implements ServiceManagerAwareInterface
      * @param Comment $comment
      * @return File 
      */
-    public function getCommentFile(Comment $comment)
-    {
+    public function getCommentFile(Comment $comment) {
         return $this->filemanagerService->getFile($comment);
     }
 
     /**
      * @return Form
      */
-    public function getCommentForm()
-    {
-//        if (null === $this->commentForm) {
-//            $this->commentForm = $this->getServiceManager()->get('comment_form');
-//        }
+    public function getCommentForm() {
         return $this->commentForm;
     }
 
@@ -117,37 +109,29 @@ class Comment implements ServiceManagerAwareInterface
      * @param Form $commentForm
      * @return Comment
      */
-    public function setCommentForm(CommentForm $commentForm)
-    {
+    public function setCommentForm(CommentForm $commentForm) {
         $this->commentForm = $commentForm;
         return $this;
     }
 
-    public function addComment($data)
-    {
-        $comment = new Comment();
+    public function addComment($data) {
+        $comment = new CommentEntity();
         $form = $this->getCommentForm();
         $form->setHydrator(new ClassMethods());
         $form->bind($comment);
         $form->setData($data);
-        $container = new \Zend\Session\Container();
         if (!$form->isValid()) {
+            $container = new \Zend\Session\Container();
             $container->offsetSet('form_errors', $form->getMessages());
             return false;
         }
         $comment = $form->getData();
-        $this->repository->persistEntity($comment);
+        $comment->setComment($data['comment']);
+        $comment->setProjectId('1');
+        //$comment->setDtc('date');
+
+        $this->repository->saveEntity($comment);
         return $comment;
-    }
-
-    public function getCommentFormRedirection()
-    {
-        return $this->redirection;
-    }
-
-    public function setCommentFormRedirection()
-    {
-        $this->redirection = $redirection;
     }
 
     /**
@@ -155,8 +139,7 @@ class Comment implements ServiceManagerAwareInterface
      *
      * @return ServiceManager
      */
-    public function getServiceManager()
-    {
+    public function getServiceManager() {
         return $this->serviceManager;
     }
 
@@ -166,8 +149,7 @@ class Comment implements ServiceManagerAwareInterface
      * @param ServiceManager $locator
      * @return User
      */
-    public function setServiceManager(ServiceManager $serviceManager)
-    {
+    public function setServiceManager(ServiceManager $serviceManager) {
         $this->serviceManager = $serviceManager;
         return $this;
     }

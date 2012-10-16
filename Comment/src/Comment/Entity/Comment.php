@@ -5,53 +5,74 @@ namespace Comment\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * A music album.
- *
- * @ORM\Entity
- * @ORM\Table(name="albums")
- * @property string $artist
- * @property string $title
- * @property int $id
+ * @ORM\Entity(repositoryClass="Comment\Repository\Comment")
+ * @ORM\Table(name="comment")
  */
-class Comment extends CommentValidation
-{
+class Comment {
 
-    //protected $inputFilter;
     /**
      * @ORM\Id
      * @ORM\Column(type="integer");
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
-    /**
-     * @ORM\Column(type="string")
-     */
-    protected $artist;
-    /**
-     * @ORM\Column(type="string")
-     */
-    protected $title;
+    protected $commentId;
+
+//    /**
+//     * @ORM\ManyToOne(targetEntity="Project");
+//     * @ORM\JoinColumn(name="projectId", referencedColumnName="projectId");
+//     */
+//    protected $project;
 
     /**
-     * Magic getter to expose protected properties.
-     *
-     * @param string $property
-     * @return mixed
+     * @ORM\Column(type="string")
      */
-    public function __get($property)
-    {
-        return $this->$property;
+    protected $projectId;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $comment;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $dtc;
+
+
+    public function getCommentId() {
+        return $this->commentId;
     }
 
-    /**
-     * Magic setter to save protected properties.
-     *
-     * @param string $property
-     * @param mixed $value
-     */
-    public function __set($property, $value)
-    {
-        $this->$property = $value;
+    public function setCommentId($commentId) {
+        $this->commentId = (int) $commentId;
+        return $this;
+    }
+
+    public function getProjectId() {
+        return $this->projectId;
+    }
+
+    public function setProjectId($projectId) {
+        $this->projectId = (int) $projectId;
+        return $this;
+    }
+    
+    public function getComment() {
+        return $this->comment;
+    }
+
+    public function setComment($comment) {
+        $this->comment = $comment;
+        return $this;
+    }
+    
+    public function getDtc() {
+        return $this->dtc;
+    }
+
+    public function setDtc($dtc) {
+        $this->dtc = $dtc;
+        return $this;
     }
 
 }

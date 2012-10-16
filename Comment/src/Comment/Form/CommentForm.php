@@ -22,20 +22,13 @@ class CommentForm extends Form
 
         // Artist        
         $this->add(array(
-            'name' => 'artist',
+            'name' => 'comment',
             'attributes' => array(
                 'type'  => 'text',
                 'label' => 'Artist',
             ),
         ));
 
-        $this->add(array(
-            'name' => 'title',
-            'attributes' => array(
-                'type'  => 'text',
-                'label' => 'Title',
-            ),
-        ));
 
         $this->add(array(
             'name' => 'submit',

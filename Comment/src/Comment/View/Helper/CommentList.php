@@ -15,8 +15,7 @@ class CommentList extends AbstractHelper
      */
     public function __invoke($url = NULL)
     {
-        //$list = $this->getCommentService()->getCommentAll();
-        $list = 'null';
+        $list = $this->getCommentService()->getCommentAll();
         $vm = new ViewModel(array(
             'url'  => $url,
             'list'  => $list,

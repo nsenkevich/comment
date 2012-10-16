@@ -14,6 +14,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Comment\Service\Comment as CommentService;
 use Comment\Form\CommentForm;
+use Doctrine\ORM\EntityManager;
 
 class CommentController extends AbstractActionController {
 
@@ -50,7 +51,7 @@ class CommentController extends AbstractActionController {
     {
         return $this->commentService;
     }
-    
+        
     public function processAction()
     {       
         if (!$this->request->isPost()) {

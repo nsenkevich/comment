@@ -34,9 +34,7 @@ class Module {
         );
     }
 
-    
-    public function getViewHelperConfig()
-    {
+    public function getViewHelperConfig() {
         return array(
             'factories' => array(
                 'commentList' => function ($serviceManager) {
@@ -53,50 +51,46 @@ class Module {
                 },
             ),
         );
-
     }
-    
+
     public function getServiceConfig() {
         return array(
             'invokables' => array(
-                'Comment\Form\CommentForm'  => 'Comment\Form\CommentForm',
-                //'comment_service'           => 'Comment\Service\Comment',
+                'Comment\Form\CommentForm' => 'Comment\Form\CommentForm',
             ),
             'factories' => array(
+                'comment_repository' => function ($sm) {
+                    $em = $sm->get('doctrine.entitymanager.orm_default');
+                    $comment_repository = $em->getRepository('Comment\Entity\Comment');
+                    return $comment_repository;
+                },
                 'comment_service' => function ($sm) {
-                    //$locator = $sm->getServiceLocator();
                     $comment_service = new Service\Comment();
-                    //$comment_service->setFilemanagerService($sm->get('filemanager_service'));
-                    //$comment_service->setRepository($sm->get('comment_repository'));
-                    $form = $sm->get('comment_form');
-                    $comment_service->setCommentForm($form);
+                    $comment_service->setRepository($sm->get('comment_repository'));
+                    $comment_service->setCommentForm($sm->get('comment_form'));
                     return $comment_service;
                 },
                 'comment_form' => function($serviceManager) {
                     $form = new Form\CommentForm();
-                    $comment = new Entity\Comment();
-                    $form->setInputFilter($comment->getInputFilter());
+                    $form->setInputFilter(new Form\CommentFilter());
                     return $form;
                 },
-                
             ),
         );
     }
-    
-    public function getControllerConfig()
-    {
+
+    public function getControllerConfig() {
         return array(
             'factories' => array(
-            'comment_controller' => function ($sm) {
-                $controller = new \Comment\Controller\CommentController();
-                $locator = $sm->getServiceLocator();
-                $form = $locator->get('comment_form');
-                $controller->setCommentForm($form);
-                $service = $locator->get('comment_service');
-                $controller->setCommentService($service);
-                return $controller;
-            }
-        ));
+                'comment_controller' => function ($sm) {
+                    $controller = new \Comment\Controller\CommentController();
+                    $locator = $sm->getServiceLocator();
+                    $controller->setCommentForm($locator->get('comment_form'));
+                    $controller->setCommentService($locator->get('comment_service'));
+                    return $controller;
+                }
+            )
+        );
     }
 
 }
