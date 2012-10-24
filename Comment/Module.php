@@ -56,7 +56,7 @@ class Module {
     public function getServiceConfig() {
         return array(
             'invokables' => array(
-                'Comment\Form\CommentForm' => 'Comment\Form\CommentForm',
+                //'Comment\Form\CommentForm' => 'Comment\Form\CommentForm',
             ),
             'factories' => array(
                 'comment_repository' => function ($sm) {
@@ -70,7 +70,7 @@ class Module {
                     $comment_service->setCommentForm($sm->get('comment_form'));
                     return $comment_service;
                 },
-                'comment_form' => function($serviceManager) {
+                'comment_form' => function($sm) {
                     $form = new Form\CommentForm();
                     $form->setInputFilter(new Form\CommentFilter());
                     return $form;
